@@ -1,0 +1,15 @@
+# Ignore all contents by default
+**
+
+# Exceptions to be included
+
+# Include dependencies
+!Pipfile
+!Pipfile.lock
+
+# Include application source
+!src/orrery/
+
+
+# N.B.: Intentional inclusions encourage a minimal image size
+# dev note: This is a negotiable & optional project-specific preference
