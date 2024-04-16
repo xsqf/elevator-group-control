@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # Use official Docker Python 3.12.2 Alpine image as base image
 FROM python:3.12.2-alpine AS base
 
