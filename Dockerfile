@@ -7,13 +7,13 @@ FROM python:3.12-alpine AS base
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-# Set so that source modules won't try to write .pyc files
+# Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE 1
 
-# Set fault handler to enable Python tracebacks on segfaults
+# Sets fault handler to enable Python tracebacks on segmentation faults
 ENV PYTHONFAULTHANDLER 1
 
-# Set to turn off buffering for easier container logging
+# Turns off buffering for easier container logging
 # ENV PYTHONUNBUFFERED 1
 
 # Start new build stage for installing Python dependencies, python-deps
@@ -36,7 +36,7 @@ COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
 # Create and switch to new user as best security practice
-RUN useradd --create-home appuser
+RUN adduser --create-home appuser
 WORKDIR /home/user
 USER appuser
 
