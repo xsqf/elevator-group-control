@@ -7,13 +7,13 @@ FROM python:3.12-alpine AS base
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-# Keeps Python from generating .pyc files in the container
+# Keep Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE 1
 
-# Sets fault handler to enable Python tracebacks on segmentation faults
+# Set fault handler to enable Python tracebacks on segmentation faults
 ENV PYTHONFAULTHANDLER 1
 
-# Turns off buffering for easier container logging
+# Turn off buffering for easier container logging
 ENV PYTHONUNBUFFERED 1
 
 # Start new build stage for installing Python dependencies, python-deps
