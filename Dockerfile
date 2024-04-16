@@ -19,10 +19,8 @@ ENV PYTHONFAULTHANDLER 1
 # Start new build stage for installing Python dependencies, python-deps
 FROM base AS python-deps
 
-# Install pipenv and compilation dependencies
-# N.B.: gcc for compilation dependencies might not be required
+# Install pipenv
 RUN pip install pipenv
-RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
 # Install Python dependencies in new virtual environment
 # N.B.: virtual env in project as a co-development-friendly practice
