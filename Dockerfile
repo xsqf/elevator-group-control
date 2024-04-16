@@ -35,14 +35,17 @@ FROM base AS runtime
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
-# Create and switch to new user as best security practice
-RUN adduser --create-home appuser
-WORKDIR /home/user
-USER appuser
-
-# Install application into container
+# Set working directory and copy over app code
 # N.B.: Use .dockerignore file exclusions to minimize image size
-COPY . .
+WORKDIR /app
+COPY . /app
+
+# Create and switch to new non-root user as best security practice
+
+# Create a non-root user with an explicit UID and add permission to /app
+# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
 
 # Run the application
 ENTRYPOINT ["python", "-m", "http.server"]
