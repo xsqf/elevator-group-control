@@ -1,5 +1,5 @@
-# Use official Docker Python 3.12 Alpine image as base image
-FROM python:3.12-alpine AS base
+# Use official Docker Python 3.12.2 Alpine image as base image
+FROM python:3.12.2-alpine AS base
 
 # Set up env
 
