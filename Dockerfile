@@ -14,7 +14,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER 1
 
 # Turns off buffering for easier container logging
-# ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED 1
 
 # Start new build stage for installing Python dependencies, python-deps
 FROM base AS python-deps
