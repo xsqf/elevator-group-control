@@ -18,4 +18,4 @@ run-shell:
 run-simulator:
 	@docker run --rm -it \
 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
-			$(local_name):$(tag) python src/orrery/simulator.py
+			$(local_name):$(tag) python orrery/simulator.py
