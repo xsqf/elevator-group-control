@@ -1,0 +1,43 @@
+**/__pycache__
+**/.venv
+**/.classpath
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.project
+**/.settings
+**/.toolstarget
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/*.dbmdl
+**/*.jfm
+**/bin
+**/charts
+**/docker-compose*
+**/compose*
+**/Dockerfile*
+**/node_modules
+**/npm-debug.log
+**/obj
+**/secrets.dev.yaml
+**/values.dev.yaml
+LICENSE
+README.md
+
+# [ ] TODO: evaluate reverting (opinionated exclude all behavior below)
+# N.B.: Intentional inclusions encourage a minimal image size
+# dev note: This is a negotiable & optional project-specific preference
+# Ignore all contents by default
+# **
+
+# Exceptions to be included
+
+# Include dependencies
+# !Pipfile
+# !Pipfile.lock
+
+# Include application source and script
+# !src/
+# !main.py
