@@ -10,7 +10,12 @@ build:
 	@echo Building $(local_name):$(tag)
 	@docker build -t $(local_name):$(tag) .
 
-run:
+run-shell:
+	@docker run -it \
+		--mount type=bind,source=$(pwd),target=/elevator-group-control \
+			$(local_name):$(tag) sh
+
+run-simulator:
 	@docker run --rm -it \
 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
-			$(local_name):$(tag) python main.py
+			$(local_name):$(tag) python src/orrery/simulator.py
