@@ -51,5 +51,3 @@ COPY . /elevator-group-control
 RUN adduser -u 5678 --disabled-password --gecos "" egcuser && chown -R egcuser /elevator-group-control
 USER egcuser
 
-# TODO: Module entry point
-# ENTRYPOINT ["python", "-m", "orrery.simulator"]
