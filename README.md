@@ -1,5 +1,9 @@
-# Elevator Group Control
+# Orrery
 
-## Lorem ipsum dolor sit amet
+**or·rer·y** /ˈôrərē/\
+▸ noun\
+a clockwork model of the solar system.
 
-Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+## Project description
+
+Orrery is a configurable model of an elevator system. It simulates Elevator Group Control scenarios.
