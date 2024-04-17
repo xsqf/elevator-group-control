@@ -37,17 +37,20 @@ FROM base AS runtime
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
+# Set app directory and app non-root user name
+ENV APP_DIR=/elevator-group-control
+ENV APP_USER=egcuser
+
 # Set working directory
-WORKDIR /elevator-group-control
+WORKDIR $APP_DIR
 
 # Transfer project code
 # N.B.: Use .dockerignore file exclusions to minimize image size
-COPY . /elevator-group-control
+COPY . $APP_DIR
 
 # Create and switch to new non-root user as best security practice
 
 # Create a non-root user with an explicit UID and add needed permissions
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" egcuser && chown -R egcuser /elevator-group-control
-USER egcuser
-
+RUN adduser -u 5678 --disabled-password --gecos "" $APP_USER && chown -R $APP_USER $APP_DIR
+USER $APP_USER
