@@ -15,7 +15,13 @@ run-shell:
 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
 			$(local_name):$(tag) sh
 
-run-simulator:
+sim:
 	@docker run --rm -it \
 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
-			$(local_name):$(tag) python orrery/simulator.py
+			$(local_name):$(tag) python orrery/simulator.py ${PARAMS}
+
+# [ ] TODO: arg parse for simulator from WIP pseudo
+# sim-help:
+# 	@docker run --rm -it \
+# 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
+# 			$(local_name):$(tag) python wip/simulator_psuedo.py --help

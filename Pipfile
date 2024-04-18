@@ -9,8 +9,12 @@ name = "pypi"
 black = "*"
 isort = "*"
 flake8 = "*"
-pytest = "*"
 pytest-cov = "*"
+pre-commit = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.12"
+
+[pipenv]
+sort_pipfile = true
