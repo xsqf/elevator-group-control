@@ -1,0 +1,93 @@
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Data
+data/
+
+# Logging
+log.info
+
+# Dev WIP
+setup.cfg
+.coveragerc
+.pre-commit-config.yaml
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+cover/
+
+# Misc OSX
+.DS_Store
+
+# Misc Windows
+Thumbs.db
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging / installers
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# mkdocs documentation
+/site
+
+# Editors
+.vscode/
+.idea/
+
+# Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# Sublime Text user-specific files
+*.sublime-workspace
+*.sublime-project
+
+# Sublime Text GitHub package
+GitHub.sublime-settings
+
+# Sublime Text Package Control
+Package Control.last-run
+Package Control.ca-list
+Package Control.ca-bundle
+Package Control.system-ca-bundle
+Package Control.cache/
+Package Control.ca-certs/
+Package Control.merged-ca-bundle
+Package Control.user-ca-bundle
+oscrypto-ca-bundle.crt
+bh_unicode_properties.cache
