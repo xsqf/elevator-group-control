@@ -24,6 +24,8 @@ The project prompt is provided in [this README.md](https://github.com/jknehr/rec
 
 # Usage
 
+Requires Docker ([Docker Desktop install recommended](https://docs.docker.com/desktop/)).
+
 ```
 make build
 make sim
@@ -33,7 +35,7 @@ make sim
 
 ```
 make build
-make sh
+make run-shell
 python orrery/simulator.py
 ```
 
