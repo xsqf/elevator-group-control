@@ -61,7 +61,6 @@ class Elevator:
                 self.passengers[passenger_id] = dest_floor  # Passenger boards elevator
                 self.board_time[passenger_id] = current_time  # Log boarding time
                 return True
-            return True
         return False
 
     def unload_passengers(self, current_time):
