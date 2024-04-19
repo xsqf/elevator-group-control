@@ -121,7 +121,7 @@ class Building:
             while requests and requests[0][0] == current_time:
                 time, pid, source, dest = requests.popleft()
                 self.process_request(time, pid, source, dest)
-            self.simulate_time_step()
+            self.simulate_time_step(current_time)
             current_time += 1
         self.output_statistics()
 
