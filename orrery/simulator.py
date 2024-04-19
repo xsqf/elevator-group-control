@@ -1,3 +1,4 @@
+import csv
 import logging
 import math
 from collections import deque, namedtuple
@@ -65,6 +66,12 @@ class Building:
         self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
         self.logs = []
 
+    def load_requests_from_csv(self, filepath):
+        with open(filepath, newline='') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
+
     def process_request(self, time, passenger_id, source_floor, target_floor):
         """Assign the first available elevator.
 
@@ -110,11 +117,7 @@ class Building:
 
 # Example initialization and simulation run
 building = Building(50, 3, 5)
-requests = [
-    (0, "passenger1", 1, 51),
-    (0, "passenger2", 1, 37),
-    (10, "passenger3", 20, 1)
-]
+requests = building.load_requests_from_csv('requests.csv')
 building.run_simulation(requests)
 
 
