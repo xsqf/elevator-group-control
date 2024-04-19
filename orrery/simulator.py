@@ -126,8 +126,18 @@ class Building:
         self.output_statistics()
 
     def output_statistics(self):
-        # [ ] TODO: implement the calculation and output of summary statistics
-        pass
+        # Calculate and print min, max, and mean wait and travel times
+        min_wait = min(self.wait_times.values())
+        max_wait = max(self.wait_times.values())
+        mean_wait = sum(self.wait_times.values()) / len(self.wait_times)
+
+        min_travel = min(self.travel_times.values())
+        max_travel = max(self.travel_times.values())
+        mean_travel = sum(self.travel_times.values()) / len(self.travel_times)
+
+        print(f"Wait Times - Min: {min_wait}, Max: {max_wait}, Mean: {mean_wait:.2f}")
+        print(f"Travel Times - Min: {min_travel}, Max: {max_travel}, Mean: {mean_travel:.2f}")
+
 
 # Example initialization and simulation run
 building = Building(50, 3, 5)
