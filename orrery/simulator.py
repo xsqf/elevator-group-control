@@ -1,6 +1,6 @@
 import logging
 import math
-from collections import namedtuple
+from collections import deque, namedtuple
 from random import expovariate, sample, seed
 
 ### DEV ###
