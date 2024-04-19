@@ -63,6 +63,7 @@ class Building:
         # [ ] TODO: evaluate changing ID to string
         # Just use index of number of elevators range to ID each elevator
         self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
+        self.logs = []
 
     def process_request(self, time, passenger_id, source_floor, target_floor):
         """Assign the first available elevator.
@@ -73,7 +74,6 @@ class Building:
         # Return available elevators in order of least occupied.
         available_elevators = sorted(self.elevators, key=lambda e: len(e.passengers))
         for elevator in available_elevators:
-            # If elevator can accommodate passenger, assign to them.
             if elevator.load_passenger(passenger_id, target_floor):
                 return True
         return False
