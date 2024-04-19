@@ -10,8 +10,8 @@ from random import expovariate, sample, seed
 LOG_FILE = 'log.info'
 
 ELEVATORS = 3
-CAPACITY = 4
-FLOORS = 5
+MAX_PASSENGERS = 4
+FLOORS = 10
 
 
 logging.basicConfig(
@@ -24,6 +24,100 @@ logging.basicConfig(
 # [ ] TODO: unit tests
 
 ###########
+
+
+class Elevator:
+    def __init__(self, elevator_id, max_passengers):
+        self.id = elevator_id
+        self.max_passengers = max_passengers
+        self.current_floor = 1  # All elevators start at floor 1
+        self.passengers = {}  # Tracks passengers to their destination floors
+        self.target_floors = []  # Scheduled floors
+
+    def move(self):
+        """Move towards the next scheduled floor."""
+        if self.target_floors:
+            next_floor = self.target_floors[0]
+            self.current_floor += 1 if self.current_floor < next_floor else -1
+
+    def load_passenger(self, passenger_id, target_floor):
+        """Load passenger if current occupied capacity allows."""
+        if len(self.passengers) < self.max_passengers:
+            self.passengers[passenger_id] = target_floor
+            if target_floor not in self.target_floors:
+                self.target_floors.append(target_floor)
+            return True
+        return False
+
+    def unload_passengers(self):
+        """Unload passengers at destination floor if current floor."""
+        to_remove = [pid for pid, floor in self.passengers.items() if floor == self.current_floor]
+        for pid in to_remove:
+            del self.passengers[pid]
+            self.target_floors.remove(self.current_floor)
+
+
+class Building:
+    def __init__(self, num_floors, num_elevators, max_passengers_per_elevator):
+        self.num_floors = num_floors
+        # [ ] TODO: evaluate changing ID to string
+        # Just use index of number of elevators range to ID each elevator
+        self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
+
+    def process_request(self, time, passenger_id, source_floor, target_floor):
+        """Assign the first available elevator.
+
+        Skate: simple round-robin or nearest available strategy
+        """
+        # [ ] TODO: VERIFY THIS DOES WHAT I WANT
+        # Return available elevators in order of least occupied.
+        available_elevators = sorted(self.elevators, key=lambda e: len(e.passengers))
+        for elevator in available_elevators:
+            # If elevator can accommodate passenger, assign to them.
+            if elevator.load_passenger(passenger_id, target_floor):
+                return True
+        return False
+
+    def simulate_time_step(self):
+        """Move every elevator to next floor then unload passengers."""
+        for elevator in self.elevators:
+            elevator.move()
+            elevator.unload_passengers()
+
+    def run_simulation(self, requests):
+        """Process sorted requests by time (i.e., chronologically)."""
+        # NOTE CHANGE: Went back to original CSV header since demo.
+        # [ ] MUST TODO: revert to original CSV header!!
+        requests.sort(key=lambda x: x[0])  # Have to revert to use 0, otherwise must be 1
+        current_time = 0
+        logging.info(f"DEBUG: Current time is {current_time}.")
+        # dev note: prefer explicit requests length > 0 over truthiness
+        while len(requests) > 0 or any(e.passengers for e in self.elevators):
+            logging.info(f"DEBUG: There are passengers waiting for or aboard elevators.")
+            while requests and requests[0][0] == current_time:
+                # Process every request received at current time.
+                logging.info(f"DEBUG: There are unprocessed requests at time {current_time}.")
+                time, pid, source, dest = requests.pop(0)
+                logging.info(f"DEBUG: Processing request at current time {current_time}: {pid}")
+                logging.info(f"DEBUG ONLY: Preview upcoming requests: {requests}")
+                self.process_request(time, pid, source, dest)
+            logging.info(f"DEBUG: No unprocessed requests at time {current_time}. Moving on...")
+            self.simulate_time_step()
+            current_time += 1
+            logging.info(f"DEBUG: Current time is now {current_time}.")
+            # [ ] TODO: Decide - Log elevator positions here?
+        logging.info(f"DEBUG: All requests processed.")
+
+
+# Example initialization and simulation run
+building = Building(50, 3, 5)
+requests = [
+    (0, "passenger1", 1, 51),
+    (0, "passenger2", 1, 37),
+    (10, "passenger3", 20, 1)
+]
+building.run_simulation(requests)
+
 
 HallCall = namedtuple('HallCall', ['id', 'time', 'origin', 'destination'])
 
