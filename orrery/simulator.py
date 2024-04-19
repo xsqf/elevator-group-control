@@ -26,6 +26,8 @@ logging.basicConfig(
 
 ###########
 
+Passenger = namedtuple('Passenger', ['pid', 'dest'])
+
 
 class Elevator:
     def __init__(self, elevator_id, max_passengers):
@@ -109,11 +111,17 @@ class Building:
         return False
 
     def simulate_time_step(self, current_time):
-        """Move every elevator to next floor then unload passengers."""
+        """Move every elevator, first unload passengers, then load passengers."""
         for elevator in self.elevators:
             elevator.move()
-            for pid, travel_time in elevator.unload_passengers(current_time):
-                self.travel_times[pid] = travel_time  # Store travel time
+            # [ ] TODO: Assess whether must replace unload yield with list
+            for pid, board_time in elevator.unload_passengers(current_time):
+                self.travel_times[pid] = current_time - board_time  # Store travel time
+                self.wait_times[pid] = board_time - self.wait_times[pid]  # Store wait time
+            for passenger in self.occupancy[elevator.current_floor]:
+                if elevator.load_passenger(passenger.pid, passenger.dest, current_time):
+                    self.occupancy[elevator.current_floor].remove(passenger)
+
         self.log_elevator_states()
 
     def log_elevator_states(self):
