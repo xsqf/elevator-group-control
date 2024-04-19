@@ -33,6 +33,7 @@ class Elevator:
         self.max_passengers = max_passengers
         self.current_floor = 1  # All elevators start at floor 1
         self.passengers = {}  # Maps passenger ID to destination floor
+        self.onboard_time = {}  # Tracks when passengers boarded
         self.target_floors = []  # Scheduled floors
 
     def move(self):
@@ -45,20 +46,24 @@ class Elevator:
             next_floor = min(self.target_floors, key=lambda x: abs(x - self.current_floor))
             self.current_floor += 1 if self.current_floor < next_floor else -1
 
-    def load_passenger(self, passenger_id, target_floor):
+    def load_passenger(self, passenger_id, target_floor, current_time):
         """Load passenger if current occupied capacity allows."""
         if len(self.passengers) < self.max_passengers:
             self.passengers[passenger_id] = target_floor
+            self.onboard_time[passenger_id] = current_time  # Log boarding time
             if target_floor not in self.target_floors:
                 self.target_floors.append(target_floor)
             return True
         return False
 
-    def unload_passengers(self):
+    def unload_passengers(self, current_time):
         """Unload passengers at destination floor if current floor."""
         to_remove = [pid for pid, floor in self.passengers.items() if floor == self.current_floor]
         for pid in to_remove:
+            travel_time = current_time - self.onboard_time[pid]
+            yield pid, travel_time  # Return passenger ID and their travel time
             del self.passengers[pid]
+            del self.onboard_time[pid]
             self.target_floors.remove(self.current_floor)
 
 
@@ -69,11 +74,13 @@ class Building:
         # Just use index of number of elevators range to ID each elevator
         self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
         self.logs = []
+        self.wait_times = {}  # Maps passenger ID to their wait time
+        self.travel_times = {}  # Maps passenger ID to their travel time
 
     def load_requests_from_csv(self, filepath):
-        with open(filepath, newline='') as file:
+        with open(filepath, newline='') as file:  # [ ] TODO: check that newline works
             reader = csv.reader(file)
-            next(reader)  # Skip header
+            next(reader)  # Skip single-row header (BRITTLE ASSUMPTION, TODO FIX)
             return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
 
     def process_request(self, time, passenger_id, source_floor, target_floor):
@@ -83,17 +90,20 @@ class Building:
         """
         # [ ] TODO: VERIFY THIS DOES WHAT I WANT
         # Return available elevators in order of least occupied.
+        self.wait_times[passenger_id] = time  # Log the request time for wait time calculation
         available_elevators = sorted(self.elevators, key=lambda e: len(e.passengers))
         for elevator in available_elevators:
-            if elevator.load_passenger(passenger_id, target_floor):
+            if elevator.load_passenger(passenger_id, target_floor, time):
+                self.wait_times[passenger_id] = time - self.wait_times[passenger_id]  # Calculate actual wait time
                 return True
         return False
 
-    def simulate_time_step(self):
+    def simulate_time_step(self, current_time):
         """Move every elevator to next floor then unload passengers."""
         for elevator in self.elevators:
             elevator.move()
-            elevator.unload_passengers()
+            for pid, travel_time in elevator.unload_passengers(current_time):
+                self.travel_times[pid] = travel_time  # Store travel time
         self.log_elevator_states()
 
     def log_elevator_states(self):
