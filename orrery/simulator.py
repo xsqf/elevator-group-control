@@ -97,10 +97,11 @@ class Building:
                 self.process_request(time, pid, source, dest)
             self.simulate_time_step()
             current_time += 1
-            logging.info(f"DEBUG: Current time is now {current_time}.")
-            # [ ] TODO: Decide - Log elevator positions here?
-        logging.info(f"DEBUG: All requests processed.")
+        self.output_statistics()
 
+    def output_statistics(self):
+        # [ ] TODO: implement the calculation and output of summary statistics
+        pass
 
 # Example initialization and simulation run
 building = Building(50, 3, 5)
