@@ -1,7 +1,7 @@
 import csv
 import logging
 import math
-from collections import deque, namedtuple
+from collections import defaultdict, deque, namedtuple
 from random import expovariate, sample, seed
 
 ### DEV ###
