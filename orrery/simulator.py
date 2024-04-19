@@ -37,7 +37,7 @@ class Elevator:
     def move(self):
         """Move towards the next scheduled floor."""
         if self.target_floors:
-            next_floor = self.target_floors[0]
+            next_floor = min(self.target_floors, key=lambda x: abs(x - self.current_floor))
             self.current_floor += 1 if self.current_floor < next_floor else -1
 
     def load_passenger(self, passenger_id, target_floor):
