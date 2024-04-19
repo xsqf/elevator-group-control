@@ -48,7 +48,7 @@ class Elevator:
             next_floor = min(self.target_floors, key=lambda x: abs(x - self.current_floor))
             self.current_floor += 1 if self.current_floor < next_floor else -1
 
-    def load_passenger(self, passenger_id, target_floor, current_time):
+    def load_passenger(self, passenger_id, dest_floor, current_time):
         """Load waiting passenger if current occupied capacity allows.
 
         This is a relaxation of assumptions in favor of in-built capacity
@@ -57,10 +57,10 @@ class Elevator:
         benchmarking is needed to assess eliminating this relaxation.
         """
         if len(self.passengers) < self.max_passengers:
-            self.passengers[passenger_id] = target_floor
-            self.onboard_time[passenger_id] = current_time  # Log boarding time
-            if target_floor not in self.target_floors:
-                self.target_floors.append(target_floor)
+            if dest_floor in self.target_floors:
+                self.passengers[passenger_id] = dest_floor  # Passenger boards elevator
+                self.board_time[passenger_id] = current_time  # Log boarding time
+                return True
             return True
         return False
 
