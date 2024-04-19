@@ -179,7 +179,10 @@ def generate_hall_calls(duration=25, arriving_every=1.0):
 
 
 def generate_requests(hall_calls):
-    requests = [list(hall_call) for hall_call in hall_calls]
+    """Turn unordered hall calls into sorted list of request value tuples."""
+    requests = list(tuple(hall_calls))
+    # Sort chronologically
+    requests.sort(key=lambda x: x[0])
     return requests
 
 
