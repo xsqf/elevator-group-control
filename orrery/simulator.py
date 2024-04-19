@@ -37,17 +37,25 @@ class Elevator:
         self.target_floors = []  # Scheduled floors
 
     def move(self):
-        """Move towards the next scheduled floor.
+        """Move towards closest floor in targets or idles w/o targets.
 
-        Currently goes to relative closest floor.
-        [ ] TODO: migrate that choice to rulesets
+        Currently goes to relative closest target floor. This helps
+        construct the shortest paths possible for direct travel time,
+        but this does not guarantee the shortest waits possible.
+        It currently does not account for reverse journey control.
         """
         if self.target_floors:
             next_floor = min(self.target_floors, key=lambda x: abs(x - self.current_floor))
             self.current_floor += 1 if self.current_floor < next_floor else -1
 
     def load_passenger(self, passenger_id, target_floor, current_time):
-        """Load passenger if current occupied capacity allows."""
+        """Load waiting passenger if current occupied capacity allows.
+
+        This is a relaxation of assumptions in favor of in-built capacity
+        maximization. However, this is quirky and could lead to system
+        saturation. Optimization opportunities exist and further
+        benchmarking is needed to assess eliminating this relaxation.
+        """
         if len(self.passengers) < self.max_passengers:
             self.passengers[passenger_id] = target_floor
             self.onboard_time[passenger_id] = current_time  # Log boarding time
@@ -139,10 +147,11 @@ class Building:
         print(f"Travel Times - Min: {min_travel}, Max: {max_travel}, Mean: {mean_travel:.2f}")
 
 
-# Example initialization and simulation run
+###  Example initialization and simulation run
 building = Building(50, 3, 5)
 requests = building.load_requests_from_csv('requests.csv')
 building.run_simulation(requests)
+###
 
 
 HallCall = namedtuple('HallCall', ['id', 'time', 'origin', 'destination'])
