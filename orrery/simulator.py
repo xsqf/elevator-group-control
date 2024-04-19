@@ -33,7 +33,7 @@ class Elevator:
         self.max_passengers = max_passengers
         self.current_floor = 1  # All elevators start at floor 1
         self.passengers = {}  # Maps passenger ID to destination floor
-        self.onboard_time = {}  # Tracks when passengers boarded
+        self.board_time = {}  # Tracks when passengers boarded
         self.target_floors = []  # Scheduled floors
 
     def move(self):
@@ -66,12 +66,14 @@ class Elevator:
     def unload_passengers(self, current_time):
         """Unload passengers at destination floor if current floor."""
         to_remove = [pid for pid, floor in self.passengers.items() if floor == self.current_floor]
-        for pid in to_remove:
-            travel_time = current_time - self.onboard_time[pid]
-            yield pid, travel_time  # Return passenger ID and their travel time
-            del self.passengers[pid]
-            del self.onboard_time[pid]
+        if to_remove:
             self.target_floors.remove(self.current_floor)
+            for pid in to_remove:
+                board_time = self.board_time[pid]
+                travel_time = current_time - board_time
+                yield pid, board_time, travel_time  # Return passenger ID and their board and travel time
+                del self.passengers[pid]
+                del self.board_time[pid]
 
 
 class Building:
