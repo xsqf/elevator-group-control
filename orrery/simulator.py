@@ -89,6 +89,13 @@ def generate_requests(hall_calls):
     return requests
 
 
+def set_seed(seed_int=42):
+    """Set seed using random integer from 0 to 100 and return int."""
+    seed_int = math.randint(0, 100) if seed_int == None else seed_int
+    seed(seed_int)
+    return seed_int
+
+
 if __name__ == "__main__":
     logging.info('Initializing simulation...')
 
