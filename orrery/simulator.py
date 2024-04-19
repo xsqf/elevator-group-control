@@ -85,6 +85,7 @@ class Building:
         self.logs = []
         self.wait_times = {}  # Maps passenger ID to their wait time
         self.travel_times = {}  # Maps passenger ID to their travel time
+        self.occupancy = defaultdict(list)  # Tracks passengers waiting on each floor
 
     def load_requests_from_csv(self, filepath):
         with open(filepath, newline='') as file:  # [ ] TODO: check that newline works
@@ -129,6 +130,7 @@ class Building:
         while len(requests) > 0 or any(e.passengers for e in self.elevators):
             while requests and requests[0][0] == current_time:
                 time, pid, source, dest = requests.popleft()
+                self.occupancy[source].append(Passenger(pid, dest))  # Track waiting passengers per floor
                 self.process_request(time, pid, source, dest)
             self.simulate_time_step(current_time)
             current_time += 1
