@@ -32,11 +32,15 @@ class Elevator:
         self.id = elevator_id
         self.max_passengers = max_passengers
         self.current_floor = 1  # All elevators start at floor 1
-        self.passengers = {}  # Tracks passengers to their destination floors
+        self.passengers = {}  # Maps passenger ID to destination floor
         self.target_floors = []  # Scheduled floors
 
     def move(self):
-        """Move towards the next scheduled floor."""
+        """Move towards the next scheduled floor.
+
+        Currently goes to relative closest floor.
+        [ ] TODO: migrate that choice to rulesets
+        """
         if self.target_floors:
             next_floor = min(self.target_floors, key=lambda x: abs(x - self.current_floor))
             self.current_floor += 1 if self.current_floor < next_floor else -1
