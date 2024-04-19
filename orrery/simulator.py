@@ -83,6 +83,11 @@ class Building:
         for elevator in self.elevators:
             elevator.move()
             elevator.unload_passengers()
+        self.log_elevator_states()
+
+    def log_elevator_states(self):
+        state = {e.id: e.current_floor for e in self.elevators}
+        self.logs.append(state)
 
     def run_simulation(self, requests):
         """Process sorted requests by time (i.e., chronologically)."""
