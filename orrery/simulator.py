@@ -88,20 +88,13 @@ class Building:
         """Process sorted requests by time (i.e., chronologically)."""
         # NOTE CHANGE: Went back to original CSV header since demo.
         # [ ] MUST TODO: revert to original CSV header!!
-        requests.sort(key=lambda x: x[0])  # Have to revert to use 0, otherwise must be 1
+        requests = deque(requests)  # Requests are pre-sorted at load
         current_time = 0
-        logging.info(f"DEBUG: Current time is {current_time}.")
         # dev note: prefer explicit requests length > 0 over truthiness
         while len(requests) > 0 or any(e.passengers for e in self.elevators):
-            logging.info(f"DEBUG: There are passengers waiting for or aboard elevators.")
             while requests and requests[0][0] == current_time:
-                # Process every request received at current time.
-                logging.info(f"DEBUG: There are unprocessed requests at time {current_time}.")
-                time, pid, source, dest = requests.pop(0)
-                logging.info(f"DEBUG: Processing request at current time {current_time}: {pid}")
-                logging.info(f"DEBUG ONLY: Preview upcoming requests: {requests}")
+                time, pid, source, dest = requests.popleft()
                 self.process_request(time, pid, source, dest)
-            logging.info(f"DEBUG: No unprocessed requests at time {current_time}. Moving on...")
             self.simulate_time_step()
             current_time += 1
             logging.info(f"DEBUG: Current time is now {current_time}.")
