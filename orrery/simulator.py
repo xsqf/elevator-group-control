@@ -1,20 +1,20 @@
 import argparse
 import csv
 import logging
-from itertools import filterfalse
 from collections import defaultdict, deque, namedtuple
+from itertools import filterfalse
 from random import choice
 
-LOG_FILE = 'log.info'
+LOG_FILE = "log.info"
 
 logging.basicConfig(
-    format='%(asctime)s : %(levelname)s : %(message)s',
+    format="%(asctime)s : %(levelname)s : %(message)s",
     level=logging.INFO,
     filename=LOG_FILE,
 )
 
 
-Passenger = namedtuple('Passenger', ['pid', 'dest'])
+Passenger = namedtuple("Passenger", ["pid", "dest"])
 
 
 class Elevator:
@@ -36,8 +36,12 @@ class Elevator:
         It currently does not account for reverse journey control.
         """
         if self.target_floors:
-            floors_elsewhere = list(filterfalse(lambda x: x == self.current_floor, self.target_floors))
-            next_floor = min(floors_elsewhere, key=lambda x: abs(x - self.current_floor))
+            floors_elsewhere = list(
+                filterfalse(lambda x: x == self.current_floor, self.target_floors)
+            )
+            next_floor = min(
+                floors_elsewhere, key=lambda x: abs(x - self.current_floor)
+            )
             if self.current_floor < next_floor:
                 self.direction = 1
             elif self.current_floor > next_floor:
@@ -58,15 +62,25 @@ class Elevator:
             if dest_floor in self.target_floors:
                 self.passengers[passenger_id] = dest_floor  # Passenger boards elevator
                 self.board_time[passenger_id] = current_time  # Log boarding time
-                self.target_floors.remove(self.current_floor) if self.current_floor in self.target_floors else None
+                (
+                    self.target_floors.remove(self.current_floor)
+                    if self.current_floor in self.target_floors
+                    else None
+                )
                 return True
         return False
 
     def unload_passengers(self, current_time):
         """Unload passengers at destination floor if current floor."""
-        to_remove = [pid for pid, floor in self.passengers.items() if floor == self.current_floor]
+        to_remove = [
+            pid for pid, floor in self.passengers.items() if floor == self.current_floor
+        ]
         if to_remove:
-            self.target_floors.remove(self.current_floor) if self.current_floor in self.target_floors else None
+            (
+                self.target_floors.remove(self.current_floor)
+                if self.current_floor in self.target_floors
+                else None
+            )
             passengers_unloaded = {pid: self.board_time[pid] for pid in to_remove}
             for pid in to_remove:
                 del self.passengers[pid]
@@ -105,20 +119,12 @@ class Building:
         for elevator in self.elevators:
             unloaded_passengers = elevator.unload_passengers(current_time)
             if unloaded_passengers:
-                logging.debug(f"Unloading passengers from Elevator {elevator.id} at floor {elevator.current_floor}...")
                 for pid, board_time in unloaded_passengers.items():
-                    logging.debug(f"Unloading Passenger {pid} from Elevator {elevator.id} at floor {elevator.current_floor}.")
                     self.travel_times[pid] = current_time - board_time  # Store travel time
                     self.wait_times[pid] = board_time - self.wait_times[pid]  # Store wait time
-                    logging.debug(f"Unloaded Passenger {pid}: travel time {self.travel_times[pid]} and wait time {self.wait_times[pid]} from board time {board_time}.")
-                logging.debug(f"Completed unloading passengers from Elevator {elevator.id} at floor {elevator.current_floor}.")
             for passenger in self.occupancy[elevator.current_floor]:
-                logging.debug(f"Attempting to load Passenger {passenger.pid} at floor {elevator.current_floor} into Elevator {elevator.id}.")
                 if elevator.load_passenger(passenger.pid, passenger.dest, current_time):
-                    logging.debug(f"Passenger {passenger.pid} loaded into Elevator {elevator.id} at floor {elevator.current_floor}.")
                     self.occupancy[elevator.current_floor].remove(passenger)
-                    logging.debug(f"Removed Passenger {passenger.pid} from floor {elevator.current_floor} occupancy list.")
-            logging.debug(f"Completed deboarding and boarding of Elevator {elevator.id} at floor {elevator.current_floor} at time {current_time}.")
             elevator.move()
 
     def log_elevator_states(self, current_time):
