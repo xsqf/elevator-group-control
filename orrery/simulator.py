@@ -76,12 +76,6 @@ class Building:
         self.travel_times = {}  # Maps passenger ID to their travel time
         self.occupancy = defaultdict(list)  # Tracks passengers waiting on each floor
 
-    def load_requests_from_csv(self, filepath):
-        with open(filepath, newline='') as file:  # [ ] TODO: check that newline works
-            reader = csv.reader(file)
-            next(reader)  # Skip single-row header
-            return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
-
     def process_request(self, time, passenger_id, source_floor, dest_floor, strategy):
         """Assign requests chronologically according to chosen strategy.
 
@@ -166,3 +160,13 @@ def nearest_available(elevators, passenger_id, source_floor, dest_floor):
 def random_available(elevators, passenger_id, source_floor, dest_floor):
     available = sorted(elevators, key=lambda e: len(e.passengers))
     return choice(available)
+
+
+def load_requests_from_csv(self, filepath='requests.csv'):
+    filepath
+    with open(filepath, newline='') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip single-row header
+        return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
+
+
