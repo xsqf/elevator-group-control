@@ -12,9 +12,7 @@ The project prompt is provided in [this README.md](https://github.com/jknehr/rec
 
 ## Project status
 
-* This is a demo of WIP as of 04/18/2024.
-* It contains hardcoded values for the purpose of demoing.
-* It contains pseudocode to give a picture of WIP for the current sprint.
+* This is an MVP as of 04-19-2024 satisfying the prompt requirements
 * A full working knowledge repository containing research, works cited, design, task planning, and daily timeline of work accomplished is actively maintained in my personal Notion workspace (shared on request).
 
 ## Next steps
@@ -28,7 +26,18 @@ Requires Docker ([Docker Desktop install recommended](https://docs.docker.com/de
 
 ```
 make build
-make sim
+make sim PARAMS='...'
+
+# Example
+make sim PARAMS='--floors 5 --elevators 5 --capacity 4 --strategy nearest --requests requests_5_seed1.csv'
+```
+
+
+## Usage help
+Please run for details on arguments to provide in PARAMS:
+```
+make sim-help
+make request-help
 ```
 
 ## Interactive
@@ -36,7 +45,14 @@ make sim
 ```
 make build
 make run-shell
-python orrery/simulator.py
+```
+
+## Request generation
+
+To generate additional requests sets beyond those provided:
+
+```
+make request-gen PARAMS='...'
 ```
 
 # Design
