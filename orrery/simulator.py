@@ -129,6 +129,7 @@ class Building:
             self.simulate_time_step(current_time)
             current_time += 1
         self.output_statistics()
+        self.output_elevator_states_to_csv()  # Output state log to CSV at end of sim
 
     def output_statistics(self):
         # Calculate and print min, max, and mean wait and travel times
@@ -142,6 +143,15 @@ class Building:
 
         print(f"Wait Times - Min: {min_wait}, Max: {max_wait}, Mean: {mean_wait:.2f}")
         print(f"Travel Times - Min: {min_travel}, Max: {max_travel}, Mean: {mean_travel:.2f}")
+
+    def output_elevator_states_to_csv(self, filename='elevator_states.csv'):
+        """Output the recorded states of all elevators to a CSV file."""
+        with open(filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['time', 'elevator_id', 'current_floor'])
+            for time, states in sorted(self.state_log.items()):
+                for elevator_id, floor in states.items():
+                    writer.writerow([time, elevator_id, floor])
 
 
 def random_choice(elevators, passenger_id, source_floor, dest_floor):
