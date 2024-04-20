@@ -59,8 +59,7 @@ class Elevator:
             self.target_floors.remove(self.current_floor)
             for pid in to_remove:
                 board_time = self.board_time[pid]
-                travel_time = current_time - board_time
-                yield pid, board_time, travel_time  # Return passenger ID and their board and travel time
+                yield pid, board_time  # Return passenger ID and their boarding time
                 del self.passengers[pid]
                 del self.board_time[pid]
 
