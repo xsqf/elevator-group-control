@@ -6,11 +6,6 @@ from random import choice
 
 LOG_FILE = 'log.info'
 
-ELEVATORS = 3
-MAX_PASSENGERS = 4
-FLOORS = 10
-
-
 logging.basicConfig(
     format='%(asctime)s : %(levelname)s : %(message)s',
     level=logging.INFO,
@@ -123,8 +118,6 @@ class Building:
 
     def run_simulation(self, requests):
         """Process sorted requests by time (i.e., chronologically)."""
-        # NOTE CHANGE: Went back to original CSV header since demo.
-        # [ ] MUST TODO: revert to original CSV header!!
         requests = deque(requests)  # Requests are pre-sorted at load
         current_time = 0
         # dev note: prefer explicit requests length > 0 over truthiness
@@ -149,13 +142,6 @@ class Building:
 
         print(f"Wait Times - Min: {min_wait}, Max: {max_wait}, Mean: {mean_wait:.2f}")
         print(f"Travel Times - Min: {min_travel}, Max: {max_travel}, Mean: {mean_travel:.2f}")
-
-
-###  Example initialization and simulation run
-building = Building(50, 3, 5)
-requests = building.load_requests_from_csv('requests.csv')
-building.run_simulation(requests)
-###
 
 
 def random_choice(elevators, passenger_id, source_floor, dest_floor):
