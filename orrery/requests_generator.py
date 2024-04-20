@@ -1,13 +1,15 @@
+import argparse
+import csv
 import logging
 import math
-from collections import deque, namedtuple
+from collections import namedtuple
 from random import expovariate, sample, seed
 
-HallCall = namedtuple('HallCall', ['id', 'time', 'origin', 'destination'])
+HallCall = namedtuple('HallCall', ['passenger_id', 'time', 'origin', 'destination'])
 
 
-def call_floors():
-    return sample(range(1, FLOORS + 1), k=2)
+def call_floors(floors):
+    return sample(range(1, floors + 1), k=2)
 
 
 def erv(lambd=1.0):
@@ -15,7 +17,7 @@ def erv(lambd=1.0):
     return expovariate(lambd)
 
 
-def generate_hall_calls(duration=25, arriving_every=1.0):
+def generate_hall_calls(duration, floors, arriving_every=1.0):
     """Generate a random representative set of hall calls.
 
     Hall calls arrive every one unit time on average by default (β=λ=1).
@@ -37,10 +39,6 @@ def generate_hall_calls(duration=25, arriving_every=1.0):
         List[HallCall]: list of hall calls as list of named tuples
     """
 
-    # [ ] TODO: remove hardcoded seed and values for demo
-    seed(42)
-    arriving_every = 2.0
-
     scale_param = arriving_every
     rate_param = 1.0 / scale_param
 
@@ -52,7 +50,7 @@ def generate_hall_calls(duration=25, arriving_every=1.0):
 
     arrival_times = [math.floor(arrival) for arrival in arrivals]
 
-    calls_data = [(arrival_time, *call_floors()) for arrival_time in arrival_times]
+    calls_data = [(arrival_time, *call_floors(floors)) for arrival_time in arrival_times]
 
     call_tuples = [(f'passenger{index}', *call_data)
                    for index, call_data in enumerate(calls_data, start=1)]
@@ -64,13 +62,22 @@ def generate_hall_calls(duration=25, arriving_every=1.0):
 
 def generate_requests(hall_calls):
     """Turn unordered hall calls into sorted list of request value tuples."""
-    requests = list(tuple(hall_calls))
+    requests = [(call.time, call.passenger_id, call.origin, call.destination) for call in hall_calls]
     # Sort chronologically
     requests.sort(key=lambda x: x[0])
     return requests
 
 
-def set_seed(seed_int=42):
+def write_requests_to_csv(requests, filename, seed=None):
+    """Output the recorded states of all elevators to a CSV file."""
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['time', 'id', 'source', 'dest'])
+        for time, pid, source, dest in requests:
+            writer.writerow([time, pid, source, dest])
+
+
+def set_seed(seed_int=None):
     """Set seed using random integer from 0 to 100 and return int."""
     seed_int = math.randint(0, 100) if seed_int == None else seed_int
     seed(seed_int)
@@ -78,15 +85,30 @@ def set_seed(seed_int=42):
 
 
 if __name__ == "__main__":
-    logging.info('Demoing request generation...')
+    logging.info('Initiating random request generation...')
+    parser = argparse.ArgumentParser(
+        description="Generate random hall calls to CSV.",
+    )
+    parser.add_argument("-f", "--floors", type=int, help="Number of floors in the building")
+    parser.add_argument("-d", "--duration", type=int, help="Duration to generate hall calls")
+    parser.add_argument("-s", "--seed", type=int, help="Random seed for determinism")
+    parser.add_argument("--arrivingevery", default=1.0, type=float, help="Rate parameter for exponential interarrival times")
+    parser.add_argument("--filename", type=str, default='requests.csv', help="Path to output CSV")
+    args = parser.parse_args()
 
     try:
-        demo_hall_calls = generate_hall_calls()
-        demo_requests = generate_requests(demo_hall_calls)
-        print(demo_requests)
-        logging.info('Printed demo requests.')
+        hall_calls = generate_hall_calls(args.duration, args.floors, args.arrivingevery)
+        requests = generate_requests(hall_calls)
+        if args.seed:
+            set_seed(args.seed)
+            seed_string = f'_seed{args.seed}'
+        else:
+            seed_string = ''
+        filename = f'requests_{args.floors}{seed_string}.csv'
+        write_requests_to_csv(requests, filename, args.seed)
+        print(f"Wrote requests to {filename}.")
     # [ ] TODO: bare except
     except:
-        logging.error('Error printing demo requests.')
+        logging.error('Error generating random requests.')
 
-    logging.info('Exiting request generation demo.')
+    logging.info('Exiting request generation.')
