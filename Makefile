@@ -20,13 +20,17 @@ sim:
 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
 			$(local_name):$(tag) python orrery/simulator.py ${PARAMS}
 
-# request-gen:
-# 	@docker run --rm -it \
-# 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
-# 			$(local_name):$(tag) python wip/requests_generator.py
+sim-help:
+	@docker run --rm -it \
+		--mount type=bind,source=$(pwd),target=/elevator-group-control \
+			$(local_name):$(tag) python orrery/simulator.py --help
 
-# [ ] TODO: arg parse for simulator from WIP pseudo
-# sim-help:
-# 	@docker run --rm -it \
-# 		--mount type=bind,source=$(pwd),target=/elevator-group-control \
-# 			$(local_name):$(tag) python wip/simulator_psuedo.py --help
+request-gen:
+	@docker run --rm -it \
+		--mount type=bind,source=$(pwd),target=/elevator-group-control \
+			$(local_name):$(tag) python wip/requests_generator.py ${PARAMS}
+
+request-help:
+	@docker run --rm -it \
+		--mount type=bind,source=$(pwd),target=/elevator-group-control \
+			$(local_name):$(tag) python wip/requests_generator.py --help
