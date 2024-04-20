@@ -2,7 +2,7 @@ import csv
 import logging
 import math
 from collections import defaultdict, deque, namedtuple
-from random import expovariate, sample, seed
+from random import choice, expovariate, sample, seed
 
 ### DEV ###
 # [ ] TODO: parameterize
@@ -79,8 +79,9 @@ class Elevator:
 
 
 class Building:
-    def __init__(self, num_floors, num_elevators, max_passengers_per_elevator):
+    def __init__(self, num_floors, num_elevators, max_passengers_per_elevator, strategy):
         self.num_floors = num_floors
+        self.strategy = strategy
         # [ ] TODO: evaluate changing ID to string
         # Just use index of number of elevators range to ID each elevator
         self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
@@ -95,20 +96,20 @@ class Building:
             next(reader)  # Skip single-row header (BRITTLE ASSUMPTION, TODO FIX)
             return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
 
-    def process_request(self, time, passenger_id, source_floor, target_floor):
-        """Assign the first available elevator.
+    def process_request(self, time, passenger_id, source_floor, dest_floor, strategy):
+        """Assign requests chronologically according to chosen strategy.
 
-        Skate: simple round-robin or nearest available strategy
+        "Skate": Random choice, random available, nearest available only
         """
-        # [ ] TODO: VERIFY THIS DOES WHAT I WANT
-        # Return available elevators in order of least occupied.
-        self.wait_times[passenger_id] = time  # Log the request time for wait time calculation
-        available_elevators = sorted(self.elevators, key=lambda e: len(e.passengers))
-        for elevator in available_elevators:
-            if elevator.load_passenger(passenger_id, target_floor, time):
-                self.wait_times[passenger_id] = time - self.wait_times[passenger_id]  # Calculate actual wait time
-                return True
-        return False
+        # [ ] TODO: VERIFY THOROUGHLY
+        self.wait_times[passenger_id] = time  # Store time request entered system
+        elevator = self.strategy(self.elevators, passenger_id, source_floor, dest_floor)
+        if elevator:
+            if dest_floor not in elevator.target_floors:
+                elevator.target_floors.append(dest_floor)
+            return True
+        if not elevator:
+            return False
 
     def simulate_time_step(self, current_time):
         """Move every elevator, first unload passengers, then load passengers."""
@@ -163,6 +164,21 @@ building = Building(50, 3, 5)
 requests = building.load_requests_from_csv('requests.csv')
 building.run_simulation(requests)
 ###
+
+
+def random_choice(elevators, passenger_id, source_floor, dest_floor):
+    return choice(elevators)
+
+
+def nearest_available(elevators, passenger_id, source_floor, dest_floor):
+    available = sorted(elevators, key=lambda e: len(e.passengers))
+    nearest_available_elevator = min(available, key=lambda e: abs(e.current_floor - source_floor))
+    return nearest_available_elevator
+
+
+def random_available(elevators, passenger_id, source_floor, dest_floor):
+    available = sorted(elevators, key=lambda e: len(e.passengers))
+    return choice(available)
 
 
 HallCall = namedtuple('HallCall', ['id', 'time', 'origin', 'destination'])
