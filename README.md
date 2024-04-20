@@ -12,7 +12,7 @@ The project prompt is provided in [this README.md](https://github.com/jknehr/rec
 
 ## Project status
 
-* This is an MVP as of 04-19-2024 satisfying the prompt requirements
+* This is an MVP as of 04-19-2024 satisfying the prompt requirements.
 * A full working knowledge repository containing research, works cited, design, task planning, and daily timeline of work accomplished is actively maintained in my personal Notion workspace (shared on request).
 
 ## Next steps
