@@ -65,9 +65,9 @@ class Elevator:
 
 
 class Building:
-    def __init__(self, num_floors, num_elevators, max_passengers_per_elevator, strategy):
+    def __init__(self, num_floors, num_elevators, max_passengers_per_elevator, strategy_function):
         self.num_floors = num_floors
-        self.strategy = strategy
+        self.strategy = strategy_function
         # [ ] TODO: evaluate changing ID to string
         # Just use index of number of elevators range to ID each elevator
         self.elevators = [Elevator(eid, max_passengers_per_elevator) for eid in range(num_elevators)]
