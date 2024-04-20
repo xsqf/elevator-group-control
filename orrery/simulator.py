@@ -166,7 +166,6 @@ class Building:
 
     def output_statistics(self):
         """Calculate and print min, max, and mean wait and travel times."""
-        print(f"Total passengers served: {len(self.wait_times)}")
 
         min_wait = min(self.wait_times.values())
         max_wait = max(self.wait_times.values())
