@@ -71,8 +71,8 @@ class Building:
         self.strategy = strategy
         # [ ] TODO: evaluate changing ID to string
         # Just use index of number of elevators range to ID each elevator
-        self.elevators = [Elevator(i, max_passengers_per_elevator) for i in range(num_elevators)]
-        self.logs = []
+        self.elevators = [Elevator(eid, max_passengers_per_elevator) for eid in range(num_elevators)]
+        self.state_log = defaultdict()  # Tracks elevator states over time
         self.wait_times = {}  # Maps passenger ID to their wait time
         self.travel_times = {}  # Maps passenger ID to their travel time
         self.occupancy = defaultdict(list)  # Tracks passengers waiting on each floor
@@ -80,7 +80,7 @@ class Building:
     def load_requests_from_csv(self, filepath):
         with open(filepath, newline='') as file:  # [ ] TODO: check that newline works
             reader = csv.reader(file)
-            next(reader)  # Skip single-row header (BRITTLE ASSUMPTION, TODO FIX)
+            next(reader)  # Skip single-row header
             return sorted([(int(row[0]), row[1], int(row[2]), int(row[3])) for row in reader], key=lambda x: x[0])
 
     def process_request(self, time, passenger_id, source_floor, dest_floor, strategy):
@@ -109,17 +109,17 @@ class Building:
             for passenger in self.occupancy[elevator.current_floor]:
                 if elevator.load_passenger(passenger.pid, passenger.dest, current_time):
                     self.occupancy[elevator.current_floor].remove(passenger)
+        self.log_elevator_states(current_time)
 
-        self.log_elevator_states()
-
-    def log_elevator_states(self):
-        state = {e.id: e.current_floor for e in self.elevators}
-        self.logs.append(state)
+    def log_elevator_states(self, current_time):
+        elevator_states = {e.eid: e.current_floor for e in self.elevators}
+        self.state_log[current_time] = elevator_states
 
     def run_simulation(self, requests):
         """Process sorted requests by time (i.e., chronologically)."""
         requests = deque(requests)  # Requests are pre-sorted at load
         current_time = 0
+        self.log_elevator_states(current_time)
         # dev note: prefer explicit requests length > 0 over truthiness
         while len(requests) > 0 or any(e.passengers for e in self.elevators):
             while requests and requests[0][0] == current_time:
