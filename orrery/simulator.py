@@ -1,8 +1,8 @@
+import argparse
 import csv
 import logging
-import math
 from collections import defaultdict, deque, namedtuple
-from random import choice, expovariate, sample, seed
+from random import choice
 
 LOG_FILE = 'log.info'
 
